@@ -16,7 +16,7 @@ probably need to be root for this).
 
 Add the following directive to your apache config to load the module
 
-    LoadModule proxy_protocol_module mod_proxy_protocol.so
+    LoadModule proxy_protocol_module <path-to-module>/mod_proxy_protocol.so
 
 or try running
 
