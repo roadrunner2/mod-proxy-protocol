@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"><head><!--
+        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+              This file is generated from xml source: DO NOT EDIT
+        XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      -->
+<title>mod_proxy_protocol - Apache HTTP Server Version 2.4</title>
+<link title="Main stylesheet" type="text/css" media="all" rel="stylesheet" href="https://httpd.apache.org/docs/2.4/style/css/manual.css"/>
+<link title="No Sidebar - Default font size" type="text/css" media="all" rel="alternate stylesheet" href="https://httpd.apache.org/docs/2.4/style/css/manual-loose-100pc.css"/>
+<link type="text/css" media="print" rel="stylesheet" href="https://httpd.apache.org/docs/2.4/style/css/manual-print.css"/><link href="https://httpd.apache.org/docs/2.4/style/css/prettify.css" type="text/css" rel="stylesheet"/>
+<script type="text/javascript" src="https://httpd.apache.org/docs/2.4/style/scripts/prettify.min.js">
+</script>
+
+<link rel="shortcut icon" href="https://httpd.apache.org/docs/2.4/images/favicon.ico"/></head>
+<body>
+<div id="page-header">
+<p class="menu"><a href="https://httpd.apache.org/docs/2.4/mod/">Modules</a> | <a href="https://httpd.apache.org/docs/2.4/mod/directives.html">Directives</a> | <a href="http://wiki.apache.org/httpd/FAQ">FAQ</a> | <a href="https://httpd.apache.org/docs/2.4/glossary.html">Glossary</a> | <a href="https://httpd.apache.org/docs/2.4/sitemap.html">Sitemap</a></p>
+<p class="apache">Apache HTTP Server Version 2.4</p>
+<img src="https://httpd.apache.org/docs/2.4/images/feather.gif" alt=""/></div>
+<div class="up"><a href="./"><img src="https://httpd.apache.org/docs/2.4/images/left.gif" alt="&lt;-" title="&lt;-"/></a></div>
+<div id="path">
+<a href="http://www.apache.org/">Apache</a> &gt; <a href="http://httpd.apache.org/">HTTP Server</a> &gt; <a href="http://httpd.apache.org/docs/">Documentation</a> &gt; <a href="https://httpd.apache.org/docs/2.4/">Version 2.4</a> &gt; <a href="./">Modules</a></div>
+<div id="page-content">
+<div id="preamble"><h1>Apache Module mod_proxy_protocol</h1>
+<div class="toplang">
+<p><span>Available Languages: </span></p>
+</div>
+<table class="module"><tr><th><a href="module-dict.html#Description">Description:</a></th><td>Implements the server side of the proxy protocol.</td></tr>
+<tr><th><a href="module-dict.html#Status">Status:</a></th><td>Extension</td></tr>
+<tr><th><a href="module-dict.html#ModuleIdentifier">Module Identifier:</a></th><td>proxy_protocol_module</td></tr>
+<tr><th><a href="module-dict.html#SourceFile">Source File:</a></th><td>mod_proxy_protocol.c</td></tr></table>
+<h3>Summary</h3>
+
+    <p><code class="module"><a href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_protocol.html">mod_proxy_protocol</a></code> implements the server side of
+    HAProxy's
+    <a href="http://blog.haproxy.com/haproxy/proxy-protocol/">Proxy Protocol</a>.</p>
+
+    <p>The module overrides the client IP address for the connection
+    with the information supplied by the upstream proxy in the proxy
+    protocol (connection) header.</p>
+
+    <p>This overridden useragent IP address is then used for the
+    <code class="module"><a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_host.html">mod_authz_host</a></code>
+    <code class="directive"><a href="https://httpd.apache.org/docs/2.4/mod/mod_authz_core.html#require">Require ip</a></code>
+    feature, is reported by <code class="module"><a href="https://httpd.apache.org/docs/2.4/mod/mod_status.html">mod_status</a></code>, and is recorded by
+    <code class="module"><a href="https://httpd.apache.org/docs/2.4/mod/mod_log_config.html">mod_log_config</a></code> <code>%a</code> and <code class="module"><a href="https://httpd.apache.org/docs/2.4/mod/core.html">core</a></code>
+    <code>%a</code> format strings. The underlying client IP of the connection
+    is available in the <code>%{c}a</code> format string.</p>
+
+    <div class="warning">It is critical to only enable this behavior from
+    intermediate proxies which are trusted by this server, since it is trivial
+    for the remote client to impersonate another client. Currently this must
+    be done by external means (such as a firewall) as this module does not
+    (yet) implement access controls.</div>
+</div>
+<div id="quickview"><h3 class="directives">Directives</h3>
+<ul id="toc">
+<li><img src="https://httpd.apache.org/docs/2.4/images/down.gif" alt=""/> <a href="#proxyprotocol">ProxyProtocol</a></li>
+</ul>
+<h3>See also</h3>
+<ul class="seealso">
+<li><a href="http://www.haproxy.org/download/1.5/doc/proxy-protocol.txt">Proxy Protocol Spec</a></li>
+</ul><ul class="seealso"><li><a href="#comments_section">Comments</a></li></ul></div>
+
+<div class="top"><a href="#page-header"><img src="https://httpd.apache.org/docs/2.4/images/up.gif" alt="top"/></a></div>
+<div class="directive-section"><h2><a id="ProxyProtocol" name="ProxyProtocol">ProxyProtocol</a> <a id="proxyprotocol" name="proxyprotocol">Directive</a></h2>
+<table class="directive">
+<tr><th><a href="directive-dict.html#Description">Description:</a></th><td>Enable or disable the proxy protocol handling</td></tr>
+<tr><th><a href="directive-dict.html#Syntax">Syntax:</a></th><td><code>ProxyProtocol On|Off</code></td></tr>
+<tr><th><a href="directive-dict.html#Context">Context:</a></th><td>server config, virtual host</td></tr>
+<tr><th><a href="directive-dict.html#Status">Status:</a></th><td>Extension</td></tr>
+<tr><th><a href="directive-dict.html#Module">Module:</a></th><td>mod_proxy_protocol</td></tr>
+</table>
+    <p>The <code class="directive">ProxyProtocol</code> enables or disables the
+    reading and handling of the proxy protocol connection header. If enabled
+    the upstream client <em>must</em> send the header every time it opens a
+    connection or the connection will get aborted.</p>
+
+    <p>While this directive may be specified in any virtual host, it is
+    important to understand that because the proxy protocol is connection
+    based and protocol agnostic, the enabling and disabling is actually based
+    on ip-address and port. This means that if you have multiple name-based
+    virtual hosts for the same host and port, and you enable it any one of
+    them, then it is enabled for all them (with that host and port). It also
+    means that if you attempt to enable the proxy protocol in one and disable
+    in the other, that won't work; in such a case the last one wins and a
+    notice will be logged indicating which setting was being overridden.</p>
+
+    <pre class="prettyprint lang-config">ProxyProtocol On</pre>
+
+
+</div>
+</div>
+<div class="bottomlang">
+<p><span>Available Languages: </span></p>
+</div><div class="top"><a href="#page-header"><img alt="top" src="https://httpd.apache.org/docs/2.4/images/up.gif"/></a></div><div class="section"><h2><a name="comments_section" id="comments_section">Comments</a></h2><div class="warning"><strong>Notice:</strong><br/>This is not a Q&amp;A section. Comments placed here should be pointed towards suggestions on improving the documentation or server, and may be removed again by our moderators if they are either implemented or considered invalid/off-topic. Questions on how to manage the Apache HTTP Server should be directed at either our IRC channel, #httpd, on Freenode, or sent to our <a href="http://httpd.apache.org/lists.html">mailing lists</a>.</div>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var comments_shortname = 'httpd';
+var comments_identifier = 'http://httpd.apache.org/docs/2.4/mod/mod_proxy_protocol.html';
+(function(w, d) {
+    if (w.location.hostname.toLowerCase() == "httpd.apache.org") {
+        d.write('<div id="comments_thread"><\/div>');
+        var s = d.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'https://comments.apache.org/show_comments.lua?site=' + comments_shortname + '&page=' + comments_identifier;
+        (d.getElementsByTagName('head')[0] || d.getElementsByTagName('body')[0]).appendChild(s);
+    }
+    else { 
+        d.write('<div id="comments_thread">Comments are disabled for this page at the moment.<\/div>');
+    }
+})(window, document);
+//--><!]]></script></div><div id="footer">
+<p class="apache">Copyright 2014 The Apache Software Foundation.<br/>Licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.</p>
+<p class="menu"><a href="https://httpd.apache.org/docs/2.4/mod/">Modules</a> | <a href="https://httpd.apache.org/docs/2.4/mod/directives.html">Directives</a> | <a href="http://wiki.apache.org/httpd/FAQ">FAQ</a> | <a href="https://httpd.apache.org/docs/2.4/glossary.html">Glossary</a> | <a href="https://httpd.apache.org/docs/2.4/sitemap.html">Sitemap</a></p></div><script type="text/javascript"><!--//--><![CDATA[//><!--
+if (typeof(prettyPrint) !== 'undefined') {
+    prettyPrint();
+}
+//--><!]]></script>
+</body></html>

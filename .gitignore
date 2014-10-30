@@ -1,0 +1,4 @@
+.libs
+mod_proxy_protocol.la
+mod_proxy_protocol.lo
+mod_proxy_protocol.slo
