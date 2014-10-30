@@ -33,10 +33,12 @@ provide the proxy protocol header while still being able to access the site
 directly (not via the ELB):
 
 1. In Apache create a copy of virtual host with a new port, and add the
-   'ProxyProtocol On' for this new virtual host.
+   'ProxyProtocol On' directive to this new virtual host.
 2. Add an entry to the security group for the server that only allows access
-   to this new port from the ELB.
-3. Point the ELB at this new port (and enable the proxy protocol for that)
+   to this new port from the ELB (specify the source as `amazon-elb/amazon-elb-sg`)
+3. Point the ELB listener at this new port (and of course
+   [enable](http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/enable-proxy-protocol.html)
+   the proxy protocol for that)
 
 ## TODO
 
