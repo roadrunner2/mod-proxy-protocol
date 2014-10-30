@@ -23,7 +23,7 @@ or try running
     apxs -a mod_proxy_protocol.c
 
 For configuration details see the
-[module docs](mod_proxy_protocol.html)
+[module docs](http://roadrunner2.github.io/mod-proxy-protocol/mod_proxy_protocol.html)
 
 ## Amazon EC2 Notes
 
