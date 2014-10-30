@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<!DOCTYPE modulesynopsis SYSTEM "https://httpd.apache.org/docs/2.4/style/modulesynopsis.dtd">
-<?xml-stylesheet type="text/xsl" href="https://httpd.apache.org/docs/2.4/style/manual.en.xsl"?>
+<!DOCTYPE modulesynopsis SYSTEM "http://httpd.apache.org/docs/2.4/style/modulesynopsis.dtd">
+<?xml-stylesheet type="text/xsl" href="http://httpd.apache.org/docs/2.4/style/manual.en.xsl"?>
 
 <!--
  Copyright 2014 Cloudzilla Inc.

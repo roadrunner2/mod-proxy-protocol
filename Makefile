@@ -5,6 +5,7 @@
 
 #   the used tools
 APXS=apxs
+XSLT=xsltproc
 
 #   the default target
 all: .libs/mod_proxy_protocol.so
@@ -17,6 +18,12 @@ all: .libs/mod_proxy_protocol.so
 install: .libs/mod_proxy_protocol.so
 	$(APXS) -i mod_proxy_protocol.c
 
+# generate the html doc
+docs: mod_proxy_protocol.html
+
+mod_proxy_protocol.html: mod_proxy_protocol.xml mod_proxy_protocol.xml.meta
+	$(XSLT) -o $@ $<
+
 #   cleanup
 clean:
-	-rm -rf mod_proxy_protocol.o mod_proxy_protocol.lo mod_proxy_protocol.slo mod_proxy_protocol.la .libs
+	-rm -rf mod_proxy_protocol.o mod_proxy_protocol.lo mod_proxy_protocol.slo mod_proxy_protocol.la .libs mod_proxy_protocol.html
