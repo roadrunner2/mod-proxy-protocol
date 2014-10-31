@@ -1,0 +1,5 @@
+## To activate mod_proxy_protocol, do:
+
+a2enmod proxy_protocol && /etc/init.d/apache2 force-reload
+
+## And then enable ProxyProtocol for the desired hosts.
