@@ -24,6 +24,10 @@ docs: mod_proxy_protocol.html
 mod_proxy_protocol.html: mod_proxy_protocol.xml mod_proxy_protocol.xml.meta
 	$(XSLT) -o $@ $<
 
+# generate packages
+dpkg:
+	debuild --no-tgz-check -uc -us
+
 #   cleanup
 clean:
 	-rm -rf mod_proxy_protocol.o mod_proxy_protocol.lo mod_proxy_protocol.slo mod_proxy_protocol.la .libs mod_proxy_protocol.html
