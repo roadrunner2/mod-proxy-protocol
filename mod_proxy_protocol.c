@@ -572,7 +572,7 @@ static int pp_determine_version(conn_rec *c, const char *ptr)
         return 1;
     }
     else {
-       ap_log_cerror(APLOG_MARK, APLOG_ERR, 0, c, 
+       ap_log_cerror(APLOG_MARK, APLOG_NOTICE, 0, c, 
                      "ProxyProtocol: no valid header found");
        return -1;
     }
