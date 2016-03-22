@@ -672,7 +672,9 @@ static apr_status_t pp_input_filter(ap_filter_t *f,
                         ctx->need = MIN_V2_HDR_LEN;
                         apr_bucket_delete(b);
                     }
-                }
+                } else {
+                    apr_bucket_delete(b);
+		}
             }
             else if (ctx->version == 1) {
                 psts = pp_process_v1_header(f->c, conn_conf,
