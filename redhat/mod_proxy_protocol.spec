@@ -11,7 +11,7 @@ Version:        0.1
 Release:        1.20141031git62d2df6%{?dist}
 License:        ASL 2.0
 Group:          System Environment/Daemons
-Source0:        https://github.com/roadrunner2/mod-proxy-protocol/archive/62d2df6.tar.gz
+Source0:        https://github.com/roadrunner2/mod-proxy-protocol/archive/62d2df6c94eb0a18605e47f6236c08130d7e120d.tar.gz
 Source1:        proxy_protocol.module
 Source2:        proxy_protocol.conf
 Patch0:         mod_proxy_protocol.c-fix-apr14-compat.patch
@@ -36,7 +36,7 @@ load balancer.
 %prep
 #%setup -q -n mod_proxy_protocol-%{version}
 %setup -q -n mod-proxy-protocol-62d2df6c94eb0a18605e47f6236c08130d7e120d
-%patch0
+%patch0 -p0 -F1
 
 %build
 %{_httpd_apxs} -c mod_proxy_protocol.c
