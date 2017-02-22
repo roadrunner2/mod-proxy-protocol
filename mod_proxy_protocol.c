@@ -44,6 +44,7 @@
 #include "ap_config.h"
 #include "ap_listen.h"
 #include "apr_strings.h"
+#include "apr_version.h"
 
 module AP_MODULE_DECLARE_DATA proxy_protocol_module;
 
@@ -91,19 +92,37 @@ static int pp_sockaddr_equal(apr_sockaddr_t *addr1, apr_sockaddr_t *addr2)
 static int pp_sockaddr_compat(apr_sockaddr_t *addr1, apr_sockaddr_t *addr2)
 {
     /* test exact address equality */
+#if !(APR_VERSION_AT_LEAST(1,5,0))
+    apr_sockaddr_t addr0;
+    static const char inaddr_any[ sizeof(struct in_addr) ] = {0};
+#endif
+
     if (apr_sockaddr_equal(addr1, addr2) &&
         (addr1->port == addr2->port || addr1->port == 0 || addr2->port == 0)) {
         return 1;
     }
 
+#if APR_VERSION_AT_LEAST(1,5,0)
     /* test address wildcards */
     if (apr_sockaddr_is_wildcard(addr1) &&
         (addr1->port == 0 || addr1->port == addr2->port)) {
+#else
+    addr0.ipaddr_ptr = &inaddr_any;
+    addr0.ipaddr_len = addr1->ipaddr_len;
+    if (apr_sockaddr_equal(&addr0, addr1) &&
+        (addr1->port == 0 || addr1->port == addr2->port)) {
+#endif
         return 1;
     }
 
+#if APR_VERSION_AT_LEAST (1,5,0)
     if (apr_sockaddr_is_wildcard(addr2) &&
         (addr2->port == 0 || addr2->port == addr1->port)) {
+#else
+    addr0.ipaddr_len = addr2->ipaddr_len;
+    if (apr_sockaddr_equal(&addr0, addr2) &&
+        (addr2->port == 0 || addr2->port == addr1->port)) {
+#endif
         return 1;
     }
 
