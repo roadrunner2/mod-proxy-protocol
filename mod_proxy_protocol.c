@@ -123,19 +123,37 @@ static int pp_sockaddr_equal(apr_sockaddr_t *addr1, apr_sockaddr_t *addr2)
 static int pp_sockaddr_compat(apr_sockaddr_t *addr1, apr_sockaddr_t *addr2)
 {
     /* test exact address equality */
+#if !(APR_VERSION_AT_LEAST(1,5,0))
+    apr_sockaddr_t addr0;
+    static const char inaddr_any[ sizeof(struct in_addr) ] = {0};
+#endif
+
     if (apr_sockaddr_equal(addr1, addr2) &&
         (addr1->port == addr2->port || addr1->port == 0 || addr2->port == 0)) {
         return 1;
     }
 
+#if APR_VERSION_AT_LEAST(1,5,0)
     /* test address wildcards */
     if (apr_sockaddr_is_wildcard(addr1) &&
         (addr1->port == 0 || addr1->port == addr2->port)) {
+#else
+    addr0.ipaddr_ptr = &inaddr_any;
+    addr0.ipaddr_len = addr1->ipaddr_len;
+    if (apr_sockaddr_equal(&addr0, addr1) &&
+        (addr1->port == 0 || addr1->port == addr2->port)) {
+#endif
         return 1;
     }
 
+#if APR_VERSION_AT_LEAST (1,5,0)
     if (apr_sockaddr_is_wildcard(addr2) &&
         (addr2->port == 0 || addr2->port == addr1->port)) {
+#else
+    addr0.ipaddr_len = addr2->ipaddr_len;
+    if (apr_sockaddr_equal(&addr0, addr2) &&
+        (addr2->port == 0 || addr2->port == addr1->port)) {
+#endif
         return 1;
     }
 
@@ -583,7 +601,7 @@ static int pp_determine_version(conn_rec *c, const char *ptr)
         return 1;
     }
     else {
-       ap_log_cerror(APLOG_MARK, APLOG_ERR, 0, c, 
+       ap_log_cerror(APLOG_MARK, APLOG_NOTICE, 0, c, 
                      "ProxyProtocol: no valid header found");
        return -1;
     }
@@ -658,7 +676,10 @@ static apr_status_t pp_input_filter(ap_filter_t *f,
             memcpy(ctx->header + ctx->rcvd, ptr, len);
             ctx->rcvd += len;
 
-            apr_bucket_delete(b);
+         
+            if (ctx->version > 0) {
+                apr_bucket_delete(b);
+            }
             psts = HDR_NEED_MORE;
 
             if (ctx->version == 0) {
@@ -666,16 +687,23 @@ static apr_status_t pp_input_filter(ap_filter_t *f,
                 if (ctx->rcvd >= MIN_HDR_LEN) {
                     ctx->version = pp_determine_version(f->c, ctx->header);
                     if (ctx->version < 0) {
-                        psts = HDR_ERROR;
+			ctx->done=1;
+			APR_BRIGADE_PREPEND(bb_out,ctx->bb);
+                	ctx->bb = NULL;
+        		return ap_get_brigade(f->next, bb_out, mode, block, readbytes);
                     }
                     else if (ctx->version == 1) {
                         ctx->mode = AP_MODE_GETLINE;
                         ctx->need = sizeof(proxy_v1);
+                        apr_bucket_delete(b);
                     }
                     else if (ctx->version == 2) {
                         ctx->need = MIN_V2_HDR_LEN;
+                        apr_bucket_delete(b);
                     }
-                }
+                } else {
+                    apr_bucket_delete(b);
+		}
             }
             else if (ctx->version == 1) {
                 psts = pp_process_v1_header(f->c, conn_conf,
