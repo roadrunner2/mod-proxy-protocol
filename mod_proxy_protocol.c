@@ -44,6 +44,7 @@
 #include "ap_config.h"
 #include "ap_listen.h"
 #include "apr_strings.h"
+#include "apr_version.h"
 
 module AP_MODULE_DECLARE_DATA proxy_protocol_module;
 
@@ -78,6 +79,37 @@ static int pp_hook_pre_config(apr_pool_t *pconf, apr_pool_t *plog,
 
     return OK;
 }
+
+#if !(APR_VERSION_AT_LEAST(1,5,0))
+static APR_DECLARE(int) apr_sockaddr_is_wildcard(const apr_sockaddr_t *addr)
+{
+    static const char inaddr_any[
+#if APR_HAVE_IPV6
+        sizeof(struct in6_addr)
+#else
+        sizeof(struct in_addr)
+#endif
+    ] = {0};
+
+    if (addr->ipaddr_ptr /* IP address initialized */
+        && addr->ipaddr_len <= sizeof inaddr_any) { /* else bug elsewhere? */
+        if (!memcmp(inaddr_any, addr->ipaddr_ptr, addr->ipaddr_len)) {
+            return 1;
+        }
+#if APR_HAVE_IPV6
+    if (addr->family == AF_INET6
+        && IN6_IS_ADDR_V4MAPPED((struct in6_addr *)addr->ipaddr_ptr)) {
+        struct in_addr *v4 = (struct in_addr *)&((apr_uint32_t *)addr->ipaddr_ptr)[3];
+
+        if (!memcmp(inaddr_any, v4, sizeof *v4)) {
+            return 1;
+        }
+    }
+#endif
+    }
+    return 0;
+}
+#endif
 
 /* Similar apr_sockaddr_equal, except that it compares ports too. */
 static int pp_sockaddr_equal(apr_sockaddr_t *addr1, apr_sockaddr_t *addr2)
