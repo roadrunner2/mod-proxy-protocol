@@ -12,7 +12,7 @@ all: .libs/mod_proxy_protocol.so
 
 # build the so in the current directory
 .libs/mod_proxy_protocol.so: mod_proxy_protocol.c
-	$(APXS) -c mod_proxy_protocol.c
+	$(APXS) -c -Wc,-Wall mod_proxy_protocol.c
 
 # install the so - usually needs root access
 install: .libs/mod_proxy_protocol.so

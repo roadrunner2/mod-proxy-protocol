@@ -392,7 +392,7 @@ static pp_parse_status_t pp_process_v1_header(conn_rec *c,
                                               proxy_header *hdr, apr_size_t len,
                                               apr_size_t *hdr_len)
 {
-    char *end, *next, *word, *host, *valid_addr_chars, *saveptr;
+    char *end, *word, *host, *valid_addr_chars, *saveptr;
     char buf[sizeof(hdr->v1.line)];
     apr_port_t port;
     apr_status_t ret;
@@ -501,8 +501,6 @@ static pp_parse_status_t pp_process_v2_header(conn_rec *c,
                                               proxy_header *hdr)
 {
     apr_status_t ret;
-    struct in_addr *in_addr;
-    struct in6_addr *in6_addr;
 
     switch (hdr->v2.ver_cmd & 0xF) {
         case 0x01: /* PROXY command */
@@ -551,7 +549,7 @@ static pp_parse_status_t pp_process_v2_header(conn_rec *c,
 
         default:
             /* not a supported command */
-            ap_log_cerror(APLOG_MARK, APLOG_ERR, ret, c, 
+            ap_log_cerror(APLOG_MARK, APLOG_ERR, 0, c, 
                           "ProxyProtocol: unsupported command %.2hx",
                           hdr->v2.ver_cmd);
             return HDR_ERROR;
@@ -685,13 +683,13 @@ static apr_status_t pp_input_filter(ap_filter_t *f,
                                             ctx->rcvd, &ctx->need);
             }
             else if (ctx->version == 2) {
+                proxy_header *hdr = (proxy_header *) ctx->header;
+
                 if (ctx->rcvd >= MIN_V2_HDR_LEN) {
-                    ctx->need = MIN_V2_HDR_LEN +
-                                ntohs(((proxy_header *) ctx->header)->v2.len);
+                    ctx->need = MIN_V2_HDR_LEN + ntohs(hdr->v2.len);
                 }
                 if (ctx->rcvd >= ctx->need) {
-                    psts = pp_process_v2_header(f->c, conn_conf,
-                                                (proxy_header *) ctx->header);
+                    psts = pp_process_v2_header(f->c, conn_conf, hdr);
                 }
             }
             else {
