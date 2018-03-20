@@ -1,3 +1,9 @@
+mod-proxy-protocol (0.2-1) xenial; urgency=low
+
+  * Merged patch to fix http/2 issues.
+
+ -- Roadrunner2 <roadrunner2@github.com>  Tue, 20 Mar 2018 02:11:49 -0700
+
 mod-proxy-protocol (0.1-1) trusty; urgency=low
 
   * Initial release
