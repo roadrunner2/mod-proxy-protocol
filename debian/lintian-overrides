@@ -1,0 +1,2 @@
+libapache2-mod-proxy-protocol: apache2-module-depends-on-real-apache2-package
+libapache2-mod-proxy-protocol: copyright-should-refer-to-common-license-file-for-apache-2

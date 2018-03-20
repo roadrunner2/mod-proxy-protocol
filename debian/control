@@ -8,7 +8,7 @@ Homepage: https://github.com/roadrunner2/mod-proxy-protocol
 
 Package: libapache2-mod-proxy-protocol
 Architecture: amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}, apache2-api-20120211, apache2 (>= 2.4.0)
+Depends: ${shlibs:Depends}, ${misc:Depends}, apache2-api-20120211
 Description: Apache module for proxy protocol
  The proxy protocol is a way for upstream proxies and load-balancers to
  for the ip-address of the client to the server. This package contains
