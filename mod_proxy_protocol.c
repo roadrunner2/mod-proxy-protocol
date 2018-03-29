@@ -333,6 +333,18 @@ static int pp_hook_pre_connection(conn_rec *c, void *csd)
     pp_config *conf;
     pp_conn_config *conn_conf;
 
+    /* Establish master config in slave connections, so that request
+     * processing finds it. */
+    if (c->master != NULL) {
+        conn_conf = ap_get_module_config(c->master->conn_config,
+                                         &proxy_protocol_module);
+        if (conn_conf) {
+            ap_set_module_config(c->conn_config, &proxy_protocol_module,
+                                 conn_conf);
+        }
+        return DECLINED;
+    }
+
     /* check if we're enabled for this connection */
     conf = ap_get_module_config(ap_server_conf->module_config,
                                 &proxy_protocol_module);
