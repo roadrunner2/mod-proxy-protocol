@@ -4,6 +4,10 @@ This is an [Apache](http://httpd.apache.org/) module that implements the
 server side of HAProxy's
 [Proxy Protocol](http://blog.haproxy.com/haproxy/proxy-protocol/).
 
+Note: as of Apache 2.4.30 this code has been merged into
+[mod_remoteip](https://httpd.apache.org/docs/2.4/mod/mod_remoteip.html),
+with the `ProxyProtocol` directive renamed to `RemoteIPProxyProtocol`.
+
 ## Build and Install
 
 You'll need the apache development packages installed (typically something
