@@ -16,7 +16,7 @@ all: .libs/mod_proxy_protocol.so
 
 # install the so - usually needs root access
 install: .libs/mod_proxy_protocol.so
-	$(APXS) -i mod_proxy_protocol.c
+	$(APXS) -i mod_proxy_protocol.la
 
 # generate the html doc
 docs: mod_proxy_protocol.html
